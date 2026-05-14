@@ -13,7 +13,7 @@ const apps: AppEntry[] = [
     id: 'paystats',
     name: 'PayStats',
     description: 'Traccia le tue spese mensili, analizza budget per categoria e visualizza trend finanziari.',
-    url: 'https://paystats.vercel.app',
+    url: 'https://personal-hub-paystats.vercel.app/',
     icon: '💰',
     color: 'from-indigo-500 to-purple-600',
     status: 'live',
