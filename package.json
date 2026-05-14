@@ -1,0 +1,17 @@
+{
+  "name": "personal-hub",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "preview": "turbo run preview"
+  },
+  "packageManager": "npm@11.3.0",
+  "devDependencies": {
+    "turbo": "^2.5.4"
+  }
+}
