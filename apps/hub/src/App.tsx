@@ -1,18 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Moon, Sun, ExternalLink, LayoutGrid } from 'lucide-react'
-import appsData from './apps.json'
-
-interface AppEntry {
-  id: string
-  name: string
-  description: string
-  url: string
-  icon: string
-  color: string
-  status: 'live' | 'wip' | 'planned'
-}
-
-const apps = appsData as AppEntry[]
+import apps, { type AppEntry } from './apps'
 
 const statusLabel: Record<AppEntry['status'], { label: string; classes: string }> = {
   live:    { label: 'Live',        classes: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400' },
