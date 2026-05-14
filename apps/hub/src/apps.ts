@@ -18,6 +18,15 @@ const apps: AppEntry[] = [
     color: 'from-indigo-500 to-purple-600',
     status: 'live',
   },
+    {
+    id: 'gymode',
+    name: 'GyMode',
+    description: 'Allenati seguendo le indicazioni del tuo personal trainer',
+    url: '',
+    icon: '',
+    color: 'from-indigo-500 to-purple-600',
+    status: 'planned',
+  },
 ]
 
 export default apps
