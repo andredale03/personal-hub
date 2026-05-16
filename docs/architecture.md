@@ -9,7 +9,7 @@ personal-hub/                  ← repository GitHub unico
 │   │   └── src/
 │   │       ├── main.tsx       # Entry point
 │   │       ├── App.tsx        # Homepage con griglia app
-│   │       ├── apps.json      # Lista delle app (fonte di verità)
+│   │       ├── apps.ts        # Lista delle app (fonte di verità)
 │   │       └── index.css      # Tailwind + font
 │   ├── paystats/              → paystats.vercel.app
 │   └── _template/             → starter kit per nuove app
@@ -29,9 +29,9 @@ personal-hub/                  ← repository GitHub unico
 | Turborepo | 2 | Orchestrazione build monorepo |
 | lucide-react | latest | Icone UI |
 
-## Fonte di verità: apps.json
+## Fonte di verità: apps.ts
 
-La lista delle app nel hub è `apps/hub/src/apps.json` — un array JSON versionato col codice.
+La lista delle app nel hub è `apps/hub/src/apps.ts` — un array TypeScript versionato col codice.
 
 **Vantaggi:**
 - Sincronizzato su tutti i dispositivi via Vercel (non localStorage)

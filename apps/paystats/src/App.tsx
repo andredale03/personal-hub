@@ -81,7 +81,7 @@ export default function App() {
   )
 
   return (
-    <div className="min-h-screen bg-surface-50 dark:bg-surface-950 flex transition-colors duration-200">
+    <div className="h-screen bg-surface-50 dark:bg-surface-950 flex overflow-hidden transition-colors duration-200">
 
       {/* ── Desktop sidebar ─────────────────────────────────────────────────── */}
       <aside className="hidden md:flex flex-col w-60 bg-white dark:bg-surface-900 border-r border-surface-100 dark:border-surface-800 p-5 fixed top-0 left-0 bottom-0 transition-colors duration-200">
@@ -116,7 +116,7 @@ export default function App() {
       </aside>
 
       {/* ── Main content ────────────────────────────────────────────────────── */}
-      <main className="flex-1 md:ml-60 pb-24 md:pb-0">
+      <main className="flex-1 md:ml-60 pb-24 md:pb-0 overflow-y-auto">
 
         {/* Mobile header */}
         <header className="md:hidden flex items-center justify-between px-5 pt-5 pb-3">

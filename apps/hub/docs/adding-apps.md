@@ -1,60 +1,86 @@
 # Aggiungere una nuova app al hub
 
-Ci sono due modi per aggiungere un'app.
+## Workflow
 
-## 1. Interfaccia Admin (consigliato)
+### 1. Aggiungi l'entry in `apps.ts`
 
-Vai su `/admin` dal hub (icona ingranaggio in alto a destra oppure clicca il placeholder "+").
-
-1. Inserisci il PIN (default: `1234`)
-2. Clicca **Nuova app**
-3. Compila il form: nome, URL, icona emoji, descrizione, stato e colore
-4. Clicca **Salva**
-
-Le app vengono salvate in `localStorage` e sono visibili immediatamente nel hub.
-
-Dall'admin puoi anche:
-- **Modificare** un'app esistente (icona matita)
-- **Eliminare** un'app (icona cestino)
-- **Riordinare** le app trascinandole (icona grip a sinistra)
-- **Cambiare il PIN** dalla sezione Sicurezza in fondo alla pagina
-
-## 2. Modifica del codice (fallback)
-
-Le app di default (mostrate se il localStorage è vuoto) si trovano in `src/storage.ts`, nell'array `DEFAULT_APPS`.
+Apri `apps/hub/src/apps.ts` e aggiungi un oggetto all'array:
 
 ```ts
-export const DEFAULT_APPS: AppEntry[] = [
-  {
-    id: 'paystats',
-    name: 'PayStats',
-    description: 'Traccia le tue spese mensili, analizza budget per categoria e visualizza trend finanziari.',
-    url: 'https://paystats.vercel.app',
-    icon: '💰',
-    color: 'from-indigo-500 to-purple-600',
-    status: 'live',
-    order: 0,
-  },
-]
+{
+  id: 'nome-app',
+  name: 'Nome App',
+  description: 'Descrizione breve di cosa fa l\'app.',
+  url: 'https://nome-app.vercel.app',
+  icon: '🚀',
+  color: 'from-teal-500 to-cyan-600',
+  status: 'live',
+}
 ```
 
-## Campi di un'app
+Usa `status: 'planned'` o `status: 'wip'` se l'app non è ancora pronta — la card sarà visibile ma non cliccabile.
+
+### 2. Crea l'app dal template
+
+```bash
+cp -r templates/app-template apps/nome-app
+cd apps/nome-app
+npm install
+npm run dev
+```
+
+### 3. Aggiungi il manifest PWA all'app
+
+Crea `apps/nome-app/public/manifest.json`:
+
+```json
+{
+  "name": "Nome App",
+  "short_name": "NomeApp",
+  "description": "...",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#4f46e5",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
+```
+
+Aggiungi in `index.html`:
+```html
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#4f46e5" />
+```
+
+### 4. Deploya su Vercel
+
+1. Pusha su GitHub
+2. Vai su [vercel.com](https://vercel.com) → **Add New Project** → importa il repo
+3. Imposta **Root Directory** su `apps/nome-app`
+4. Deploy → ottieni l'URL e aggiornalo in `apps.ts`
+
+---
+
+## Campi di AppEntry
 
 | Campo | Tipo | Descrizione |
 |-------|------|-------------|
-| `id` | string | Identificatore unico (generato automaticamente dall'admin) |
+| `id` | string | Identificatore unico, kebab-case |
 | `name` | string | Nome visualizzato nella card |
 | `description` | string | Testo descrittivo sotto al nome |
-| `url` | string | URL dell'app (aperto in un nuovo tab) |
-| `icon` | string | Emoji usata come icona |
-| `color` | string | Gradiente Tailwind (vedi [design-system.md](design-system.md)) |
+| `url` | string | URL dell'app (aperta in popup standalone) |
+| `icon` | string | Emoji icona |
+| `color` | string | Gradiente Tailwind (es. `from-indigo-500 to-purple-600`) |
 | `status` | `'live' \| 'wip' \| 'planned'` | Stato dell'app |
-| `order` | number | Posizione nella griglia (gestita automaticamente) |
 
 ## Valori di `status`
 
-| Valore | Etichetta | Comportamento |
-|--------|-----------|---------------|
-| `live` | Live | Card cliccabile, apre l'URL in un nuovo tab |
-| `wip` | In corso | Card non cliccabile, opacità ridotta |
-| `planned` | Pianificata | Card non cliccabile, opacità ridotta |
+| Valore | Badge | Comportamento |
+|--------|-------|---------------|
+| `live` | Live (verde) | Card cliccabile, apre popup |
+| `wip` | In corso (ambra) | Card non cliccabile, opacità ridotta |
+| `planned` | Pianificata (grigio) | Card non cliccabile, opacità ridotta |
+
+## Riordinare le app
+
+L'ordine delle card segue l'ordine degli oggetti in `apps.ts`. Sposta gli oggetti nell'array e salva.

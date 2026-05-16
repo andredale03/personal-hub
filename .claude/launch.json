@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "hub",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "rootDir": "C:\\Users\\dales\\Desktop\\personal-hub\\apps\\hub",
+      "port": 5174
+    },
+    {
+      "name": "paystats",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "rootDir": "C:\\Users\\dales\\Desktop\\personal-hub\\apps\\paystats",
+      "port": 5173
+    }
+  ]
+}

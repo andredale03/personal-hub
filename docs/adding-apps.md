@@ -34,17 +34,17 @@ Aggiungi le tue dipendenze specifiche con `npm install`.
 
 ### 4. Aggiungi l'app al hub
 
-Apri `apps/hub/src/apps.json` e aggiungi un oggetto:
+Apri `apps/hub/src/apps.ts` e aggiungi un oggetto all'array:
 
-```json
+```ts
 {
-  "id": "nome-app",
-  "name": "Nome App",
-  "description": "Descrizione breve di cosa fa l'app.",
-  "url": "https://nome-app.vercel.app",
-  "icon": "🚀",
-  "color": "from-teal-500 to-cyan-600",
-  "status": "live"
+  id: 'nome-app',
+  name: 'Nome App',
+  description: 'Descrizione breve di cosa fa l\'app.',
+  url: 'https://nome-app.vercel.app',
+  icon: '🚀',
+  color: 'from-teal-500 to-cyan-600',
+  status: 'live',
 }
 ```
 

@@ -21,10 +21,10 @@ const apps: AppEntry[] = [
     {
     id: 'gymode',
     name: 'GyMode',
-    description: 'Allenati seguendo le indicazioni del tuo personal trainer',
+    description: 'Allenati seguendo le indicazioni del tuo personal trainer.',
     url: '',
-    icon: '',
-    color: 'from-indigo-500 to-purple-600',
+    icon: '💪',
+    color: 'from-emerald-500 to-teal-600',
     status: 'planned',
   },
 ]

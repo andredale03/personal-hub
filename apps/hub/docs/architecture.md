@@ -3,24 +3,21 @@
 ## Struttura delle cartelle
 
 ```
-MyHub/
-├── docs/                   # Documentazione del progetto
-│   ├── README.md
-│   ├── adding-apps.md
-│   ├── architecture.md
-│   ├── design-system.md
-│   └── deployment.md
+apps/hub/
+├── docs/                   # Documentazione
+├── public/
+│   ├── icon.svg            # Icona app (512×512, gradiente indigo/viola)
+│   ├── favicon.svg
+│   ├── icons.svg
+│   └── manifest.json       # PWA manifest (display: standalone)
 ├── src/
-│   ├── main.tsx            # Entry point React + BrowserRouter
-│   ├── App.tsx             # Homepage del hub (legge da localStorage)
-│   ├── AdminPage.tsx       # Area admin (PIN + CRUD app + cambio PIN)
-│   ├── storage.ts          # Layer localStorage (app e PIN)
-│   └── index.css           # Tailwind directives + font Google
-├── public/                 # Asset statici (favicon, ecc.)
-├── index.html              # HTML entry point
+│   ├── main.tsx            # Entry point React
+│   ├── App.tsx             # Griglia app + apertura popup
+│   ├── apps.ts             # Registro app (fonte di verità)
+│   └── index.css           # Tailwind directives + font
+├── index.html              # HTML entry point (meta PWA inclusi)
 ├── vite.config.ts          # Config Vite (porta 5174)
 ├── tailwind.config.js      # Config Tailwind (dark mode, colori brand)
-├── tsconfig.json           # Config TypeScript
 └── package.json
 ```
 
@@ -30,60 +27,68 @@ MyHub/
 |------------|----------|-------|
 | React | 19 | UI framework |
 | TypeScript | 6 | Type safety |
-| Vite | 8 | Build tool e dev server |
+| Vite | 5 | Build tool e dev server |
 | Tailwind CSS | 3 | Styling utility-first |
-| React Router DOM | 7 | Routing tra hub e admin |
 | lucide-react | latest | Icone UI |
 
-## Routing
+## Registro app: apps.ts
 
-| Route | Componente | Accesso |
-|-------|-----------|---------|
-| `/` | `App.tsx` | Pubblico |
-| `/admin` | `AdminPage.tsx` | Protetto da PIN |
+Le app sono definite in `src/apps.ts` come array TypeScript versionato col codice.
 
-## Scelte architetturali
+```ts
+interface AppEntry {
+  id: string
+  name: string
+  description: string
+  url: string
+  icon: string
+  color: string
+  status: 'live' | 'wip' | 'planned'
+}
+```
 
-**`localStorage` come database** — le app vengono salvate nel browser con la chiave `hub-apps`. Al primo accesso, se il localStorage è vuoto, viene usato `DEFAULT_APPS` da `storage.ts` come fallback.
+**Vantaggi rispetto a localStorage:**
+- Versionato con git
+- Type-safe
+- Sincronizzato su tutti i dispositivi via deploy
+- Zero runtime failures
 
-**PIN client-side** — il PIN è salvato in `localStorage` (chiave `hub-pin`, default `1234`). È sufficiente per un uso personale: l'admin non espone dati sensibili, protegge solo da modifiche accidentali.
+## Apertura app
 
-**Dark mode via classe** — `darkMode: 'class'` in Tailwind. Il toggle aggiunge/rimuove la classe `dark` su `<html>` e salva la preferenza con la chiave `hub-theme`.
+Le card con `status: 'live'` aprono l'URL tramite `window.open` con features specifiche:
 
-**Drag-and-drop nativo** — il riordinamento nell'admin usa le API HTML5 (`draggable`, `onDragStart`, `onDrop`) senza librerie esterne.
+```ts
+window.open(url, `app_${id}`, 'width=1280,height=800,toolbar=0,menubar=0,location=0')
+```
+
+Questo apre una finestra centrata senza chrome del browser. Se l'app di destinazione è installata come PWA, il browser la apre direttamente nella finestra standalone.
+
+## PWA
+
+Il hub è una Progressive Web App:
+- `public/manifest.json` — `display: standalone`, `theme_color: #4f46e5`
+- `index.html` — meta tag `theme-color`, `apple-mobile-web-app-capable`
+
+Installato da Chrome/Edge, si apre come app desktop dal menu Start senza barra del browser.
+
+## Dark mode
+
+`darkMode: 'class'` in Tailwind. Il toggle aggiunge/rimuove la classe `dark` su `<html>` e salva la preferenza con la chiave `hub-theme` in localStorage.
+
+## Layout
+
+Il hub usa `h-screen` + `flex flex-col` + `overflow-hidden` sul root:
+- Header fisso (56px)
+- Main scrollabile (`flex-1 overflow-y-auto`)
+
+Con poche app, non è necessario scrollare. Se le app crescono, la sezione principale scrolla internamente.
 
 ## Flusso dati
 
 ```
-localStorage (hub-apps)
-  └─ loadApps() → App.tsx
-       └─ .map() → AppCard
-            ├─ status === 'live' → <a href={url} target="_blank">
-            └─ status !== 'live' → <div> (non cliccabile)
-
-AdminPage.tsx
-  ├─ loadApps() / saveApps()  → legge e scrive hub-apps
-  ├─ loadPin() / savePin()    → legge e scrive hub-pin
-  └─ CRUD + drag reorder → saveApps() → aggiorna hub-apps
+apps.ts (array statico)
+  └─ App.tsx
+       └─ .map() → <button> card
+            ├─ status === 'live' → window.open(url, popup features)
+            └─ status !== 'live' → disabled (opacità ridotta)
 ```
-
-## Chiavi localStorage
-
-| Chiave | Contenuto |
-|--------|-----------|
-| `hub-apps` | JSON array di `AppEntry[]` |
-| `hub-pin` | Stringa PIN (default `1234`) |
-| `hub-theme` | `'light'` oppure `'dark'` |
-
-## Relazione con le altre app
-
-MyHub è completamente disaccoppiato dalle singole app:
-
-```
-MyHub (hub.vercel.app)
-  ├── → paystats.vercel.app   (progetto Vercel separato)
-  ├── → altra-app.vercel.app  (progetto Vercel separato)
-  └── → ...
-```
-
-Ogni app è deployata autonomamente. Il hub non condivide codice, stato o dipendenze con le app figlie.
